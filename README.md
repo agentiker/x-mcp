@@ -10,14 +10,17 @@ Works with **Claude Code**, **Claude Desktop**, **OpenAI Codex**, **Cursor**, **
 
 ## What Can It Do?
 
-| Category | Tools | What You Can Say |
-|----------|-------|------------------|
-| **Post** | `post_tweet`, `reply_to_tweet`, `quote_tweet`, `delete_tweet` | "Post 'hello world' on X" / "Reply to this tweet saying thanks" |
-| **Read** | `get_tweet`, `search_tweets`, `get_timeline`, `get_mentions` | "Show me @elonmusk's latest posts" / "Search for tweets about MCP" |
-| **Users** | `get_user`, `get_followers`, `get_following` | "Look up @openai" / "Who does this user follow?" |
-| **Engage** | `like_tweet`, `retweet` | "Like that tweet" / "Retweet this" |
-| **Media** | `upload_media` | "Upload this image and post it with the caption..." |
-| **Analytics** | `get_metrics` | "How many impressions did my last post get?" |
+| Category | Tools | What You Can Say | Status |
+|----------|-------|------------------|--------|
+| **Post** | `post_tweet`, `quote_tweet`, `delete_tweet` | "Post 'hello world' on X" | OK |
+| **Read** | `get_tweet`, `search_tweets`, `get_timeline`, `get_mentions` | "Show me @elonmusk's latest posts" | OK |
+| **Users** | `get_user`, `get_followers`, `get_following` | "Look up @openai" / "Who does this user follow?" | OK |
+| **Engage** | `retweet` | "Retweet this" | OK |
+| **Media** | `upload_media` | "Upload this image and post it with the caption..." | OK |
+| **Analytics** | `get_metrics` | "How many impressions did my last post get?" | OK |
+| **Bookmarks** | `get_bookmarks`, `bookmark_tweet`, `unbookmark_tweet` | "Show my bookmarks" | Requires Basic+ tier |
+| **Reply** | `reply_to_tweet` | "Reply to this tweet saying thanks" | Restricted (see below) |
+| **Like** | `like_tweet` | "Like that tweet" | Removed on Free tier (see below) |
 
 Accepts tweet URLs or IDs interchangeably -- paste `https://x.com/user/status/123` or just `123`.
 
@@ -239,6 +242,24 @@ With these environment variables: `X_API_KEY`, `X_API_SECRET`, `X_ACCESS_TOKEN`,
 
 ---
 
+## API Restrictions (as of 2025-2026)
+
+X has progressively restricted what automated/API clients can do. Here's what affects x-mcp:
+
+### Likes removed from Free tier (Aug 2025)
+The `like_tweet` endpoint (`POST /2/users/:id/likes`) was removed from the Free API tier in August 2025. If you're on the Free tier, `like_tweet` will return a permissions error. Paid tiers (Basic, Pro, Enterprise) are unaffected.
+
+### Programmatic replies restricted (Feb 2026)
+Replies via the API now only succeed if the original post's author @mentioned you or quoted your post. This applies to **all self-serve tiers** (Free, Basic, Pro, Pay-Per-Use). Only Enterprise is exempt. Use `quote_tweet` as a workaround.
+
+### Bookmarks require Basic+ tier
+Bookmark endpoints have never been available on the Free tier. You need at least Basic ($200/mo) to use `get_bookmarks`, `bookmark_tweet`, and `unbookmark_tweet`.
+
+### Post volume caps
+Free tier: 500 posts/month. Basic: 10,000/month. Pro: 1,000,000/month.
+
+---
+
 ## Troubleshooting
 
 ### 403 "oauth1-permissions" error when posting
@@ -251,7 +272,7 @@ Double-check that all 5 credentials in your `.env` are correct and that there ar
 The error message includes exactly when the rate limit resets. Wait until then, or reduce request frequency.
 
 ### Reply fails with a permissions/restriction error
-As of Feb 2024, X restricts programmatic replies via the API. You can only reply if the original author @mentions you or quotes your post. This applies to Free, Basic, Pro, and Pay-Per-Use tiers (Enterprise is exempt). Use `quote_tweet` as a workaround.
+As of Feb 2026, X restricts programmatic replies via the API on all self-serve tiers. You can only reply if the original author @mentions you or quotes your post. This applies to Free, Basic, Pro, and Pay-Per-Use tiers (Enterprise is exempt). Use `quote_tweet` as a workaround.
 
 ### Server shows "Connected" but tools aren't used
 Make sure you added the server with the correct scope (user/global, not project-scoped if you want it everywhere), then restart your client.

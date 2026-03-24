@@ -81,7 +81,7 @@ server.tool(
 
 server.tool(
   "reply_to_tweet",
-  "Reply to an existing post on X. Provide the tweet ID or URL to reply to. NOTE: As of Feb 2024, X restricts programmatic replies -- you can only reply if the original author @mentions you or quotes your post. Otherwise the API will return an error. Consider using quote_tweet as an alternative.",
+  "Reply to an existing post on X. Provide the tweet ID or URL to reply to. NOTE: As of Feb 2026, X restricts programmatic replies on all self-serve tiers (Free, Basic, Pro, Pay-Per-Use) -- you can only reply if the original author @mentions you or quotes your post. Otherwise the API will return an error. Enterprise is exempt. Consider using quote_tweet as an alternative.",
   {
     tweet_id: z.string().describe("The tweet ID or URL to reply to"),
     text: z.string().describe("The reply text"),
@@ -282,7 +282,7 @@ server.tool(
 
 server.tool(
   "like_tweet",
-  "Like a post on X.",
+  "Like a post on X. NOTE: As of Aug 2025, this endpoint was removed from the Free API tier. Only works on paid tiers (Basic, Pro, Enterprise).",
   {
     tweet_id: z.string().describe("The tweet ID or URL to like"),
   },
